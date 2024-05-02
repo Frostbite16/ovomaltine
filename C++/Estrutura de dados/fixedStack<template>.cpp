@@ -4,13 +4,13 @@ template <class T=int>
 
 
 class stack{
-    T vet[5];
+    T vet[100];
     unsigned topo;
 
     public:
         stack(): topo(0) {}
 
-        stack(T val): topo(5) {
+        stack(T val): topo(100) {
             unsigned i;
             for(i=0;i<topo;i++){
                 vet[i] = val;
@@ -18,7 +18,7 @@ class stack{
 
         }
         bool push(const T &val){
-            if(topo>=5)
+            if(topo>=100)
                 return false;
             vet[topo++]=val;
             return true;
