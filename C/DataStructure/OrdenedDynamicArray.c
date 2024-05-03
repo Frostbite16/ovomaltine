@@ -39,6 +39,6 @@ void arrayInsert(array array, int x){
 			i = array.size;	
 
 		}
-  }
+  	}
 }
 
