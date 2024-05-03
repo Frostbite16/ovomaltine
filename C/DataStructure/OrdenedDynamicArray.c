@@ -14,17 +14,17 @@ typedef struct array{
     
 }array;
  
-void arrayInnit(array *array){
-	array->end = malloc(sizeof(int));
-	array->end[0] = 0;
-	array->size = 0;
+void arrayInnit(array array){
+	array.end = malloc(sizeof(int));
+	array.end[0] = 0;
+	array.size = 0;
 } 
 
 void arrayInsert(array array, int x){
 	int i,j;
 
 	array.size++;	
-	//array.end = realloc(array.end, sizeof(int) * array.size);
+	array.end = realloc(array.end, sizeof(int) * array.size);
 	for(i=0;i<=array.size-1;i++){
 		if(i==array.size-1){
 			array.end[i]=x;
@@ -40,5 +40,18 @@ void arrayInsert(array array, int x){
 
 		}
   	}
+}
+
+void arrayRemove(array array, int x){
+
+}
+
+int main(){
+	array a1;
+	arrayInnit(a1);
+	arrayInsert(a1,5);
+	return 0;
+
+
 }
 
