@@ -10,41 +10,39 @@
 typedef struct array{
 
 	int *end;
-	unsigned size;
+	int size;
     
 }array;
  
-array arrayInnit(array array){
-	array.end = malloc(sizeof(int));
-	array.end[0] = 0;
-	array.size = 0;
-	return array;
+void arrayInnit(array *array){
+	array->end = malloc(sizeof(int));
+	array->end[0] = 0;
+	array->size = 0;
 } 
 
-void arrayInsert(array array, int x){
-	unsigned i,j;
-	array.size++;
-	array.end = realloc(array.end, sizeof(int) * array.size);
-	for(i=0;i<=array.size-1;i++){
-		
-		printf("%u ",array.size);
+void arrayInsert(array *array, int x){
+	int i,j;
+	array->size+=1;
+
+	array->end = realloc(array->end, sizeof(int) * array->size);
+	for(i=0;i<=array->size-1;i++){
 	
-		if(array.end[i]>=x){
-			for(j=array.size-1;j>=i;j--){
-				array.end[j+1] = array.end[j];
-				printf("%d",array.end[1]);
+		if(i==array->size-1){
+			array->end[i]=x;
+			i = array->size;
+		}
+
+		if(array->end[i]>=x){
+			for(j=array->size-1;j>=i;j--){
+				array->end[j+1] = array->end[j];
 			
 			}
-			array.end[i] = x;
-			i = array.size;	
+			array->end[i] = x;
+			i = array->size;	
 
 		}
-		if(i==array.size-1){
-			array.end[i]=x;
-			i = array.size;
-			
-		}
-		//printf("%u %u %d %d ", i, array.size-1,x, array.end[i-1]);
+		
+
   	}
 }
 
@@ -65,12 +63,12 @@ void arrayRemove(array array, int x){
 
 int main(){
 	array a1;
-	a1 = arrayInnit(a1);
-	arrayInsert(a1,6);
-	arrayInsert(a1,4);
-	printf("%u ", a1.size);
-	for(unsigned i=0; i<=a1.size;i++){
-		printf("%d %u ",a1.end[i], a1.size);
+	arrayInnit(&a1);
+	arrayInsert(&a1,6);
+	arrayInsert(&a1,4);
+	arrayInsert(&a1,5);
+	for(unsigned i=0; i<=a1.size-1;i++){
+		printf("%d ",a1.end[i]);
 	}
 	//arrayRemove(a1,5);
 	return 0;
