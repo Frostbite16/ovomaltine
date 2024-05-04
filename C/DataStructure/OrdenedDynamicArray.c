@@ -57,9 +57,7 @@ void arrayRemove(array *array, int x){
 }
 
 void arrayDeallocate(array *array){
-	printf("%p ",array);
 	free(array);
-	printf("%p",array);
 }
 
 
