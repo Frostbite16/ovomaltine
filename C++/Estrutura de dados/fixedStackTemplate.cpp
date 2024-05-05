@@ -17,6 +17,11 @@ class stack{
             }
 
         }
+        
+        int GetTopo() const{
+            return topo;
+        }
+
         bool push(const T &val){
             if(topo>=100)
                 return false;
@@ -29,7 +34,10 @@ class stack{
             --topo;
             return true;
         }
-        T vetor(){
-            return vet[topo-1];
+        T ReturnTopo(){
+            return *vet[topo-1];
+        }
+        T readStack(const int i;){
+            return *vet[topo-i];
         }
 };
