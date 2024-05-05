@@ -1,11 +1,12 @@
 //Array dinamica ordenada de alocacação sequencial
 // Alocar - feita
 // Inserir - feita
-// Remover
-// Desalocar
+// Remover - feita
+// Desalocar - feita
 
 #include <stdio.h>
 #include <stdlib.h>
+
 
 typedef struct array{
 	int *end;
@@ -40,6 +41,23 @@ void arrayInsert(array *array, int x){
   	}
 }
 
+int *arrayBSearch(array *array, int x){
+	int meio, inf=1, sup=array->size;
+	while (inf<=sup){
+		meio = (inf+sup)/2;
+		if(array->end[meio]==x){
+			return &array->end[meio];
+		}
+		else if (array->end[meio]<x){
+			inf = meio + 1;
+		}
+		else{
+			sup = meio - 1;
+		}
+	}
+	return NULL;
+}
+
 void arrayRemove(array *array, int x){
 	unsigned i,j;
 
@@ -61,6 +79,8 @@ void arrayDeallocate(array *array){
 	free(array);
 	printf("%p",array);
 }
+
+
 
 
 
