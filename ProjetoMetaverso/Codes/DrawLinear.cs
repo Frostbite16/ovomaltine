@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class DrawLinear : MonoBehaviour
 {
+
     LinearEquation _startPos;
     LinearEquation _endPos;
 
     LinearEquation _width;
 
-    void Start(){
+    void Start()
+    {
+
 
         _startPos = new LinearEquation(2, 1, -20, 0);
         _endPos = new LinearEquation(2, 1, 20, 0);
@@ -20,6 +23,8 @@ public class DrawLinear : MonoBehaviour
 
         LinearEquation.drawCurve(_startPos, _endPos, _width, Color.cyan);
 
-        
+        //LinearEquation.drawCircle(_startPos, _endPos, _width, Color.green);
+
+
     }
 }
