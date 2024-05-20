@@ -5,56 +5,45 @@ using namespace std;
 
 int main(){
 
-    int i,j,k;
-    int maior = 0;
-    int im, jm;
     int n,m;
     int a,b,p;
-    int grafo[100][100];
-    int unv[100];
-    int dist[100];
-    float pm=1;
+    int i,j,k;
+    double distancia[100][100];
+    int maior[100],ma;
+
     cin >> n >> m;
-    for(i=0;i<=n;i++){
-        for(j=0;j<n;j++){
-            grafo[i][j] = -1;
-            
+    
+    for(i=0; i<=n; i++){
+        for(j=0; j<=n; j++){
+            distancia[i][j] = 100000;
         }
     }
-
-    for(i=0;i<m;i++){
+    for(i=0; i<m; i++){
         cin >> a >> b >> p;
-        grafo[a][b] = p;
-        grafo[b][a] = p;
+        distancia[a][b] = 100-p;
+        distancia[b][a] = 100-p;
     }
-
-    for(i=0;i<n;i++){
-        grafo[i][i] = 0;
-        unv[i] = i;
+    for(i=1; i<=n; i++){
+        distancia[i][i] = 0;
     }
-
-    for(i=1;i<=n;i++){
-        dist[i] = grafo[1][i];
-    }
-
-
-    /*for(k=1;k<n;k++){
-        for(i=1;i<n;i++){
-            for(j=1;j<n;j++){
-                if(grafo[i][j] < grafo[i][k] * grafo[k][j]){
-                    grafo[i][j] = grafo[i][k] * grafo[k][j];
+    for(k=1;k<=n;k++){
+        for(i=1;i<=n;i++){
+            for(j=1;j<=n;j++){
+                if((distancia[i][j] > (distancia[i][k] + distancia[k][j]))&&(distancia[i][k]<100000)&&(distancia[k][j]<100000)){
+                    distancia[i][j] = (distancia[i][k] + distancia[k][j]);
                 }
             }
         }
-    }*/
-    j=1;
-    
-    
-    for(i=0;i<=n;i++){
-        for(j=0;j<=n;j++){
-            printf("%d ", grafo[i][j]);
+    }
+
+    for(i=1; i<=n; i++){
+        for(j=1; j<=n; j++){
+            /*if((distancia[i][j]!=0)&&(distancia[i][j]<100)){
+               distancia[i][j] = 100-distancia[i][j];
+            }*/
+            cout << distancia[i][j] << " ";
         }
-        printf("\n ");
+        cout << endl;
     }
 
     
