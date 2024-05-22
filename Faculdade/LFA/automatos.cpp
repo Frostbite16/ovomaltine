@@ -1,26 +1,43 @@
-#include <iostream>
-#include <string>
+
+#include <iostream> /* cin, cout */
+#include <string> /* string */
 
 using namespace std;
 
 class automato{
-    char Q[10], F[10], A[10], q, a;
-    string P[30]; 
-    char Ma[10][10];
+    char estados[10], estadosFinais[10], alfabeto[10], est_Inicial;
+    string PalavraAtual[30], palavraAceita[30]; 
+    char matrizAlpha[10][10];
+    int alphaSize, clock;
     
     public:
         
-        void setQ(char c, int i){
-            Q[i] = c;
+        void addEstados(char c, int i){ // Adiciona novos estados com nome c na posicao i do vetor estados[]
+
         }
 
-        void setF(char c, int i){
-            F[i] = c;
+        void addEstadosFinais(char c, int i){ // Adiciona novos estados finais com nome c na posicao i do vetor estadosFinais[]
+            estadosFinais[i] = c;
         }
 
-        void setA(char c, int i){
-            A[i] = c;
+        void addAlfabeto(char c, int i){ // Adiciona novos simbolos c na posicao i do vetor alfabeto[]
+            alfabeto[i] = c;
         }
+        
+        bool checkAlfa(char c){ // Checa se um simbolo já está na no vetor alfabeto[], caso esteja retorna falso
+            for(int i=0;i<alphaSize;++i){
+                if(c==alfabeto[i]){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void funcTransicao(unsigned i, unsigned j, unsigned c){ // adiciona novas relacoes entre os estados
+            
+
+        }
+
     
 
 
