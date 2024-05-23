@@ -9,7 +9,7 @@ using namespace std;
 class automato{
     string estados, estadosFinais, alfabeto;
     string PalavraAtual, palavraAceita; 
-    char matrizAlpha[10][10],estInicial;
+    char matrizDelta[10][10],estInicial;
     int estadoSize=0, alfaSize=0, clock=0;
     int i,j,k;
     
@@ -19,6 +19,7 @@ class automato{
         {}
         
         void addEstados(){ // Adiciona novos estados com nome c na posicao i do vetor estados[] caso o estado não exista
+            cin >> ws;
             getline(cin, estados);
 
             for(i=0;i<estados.size();i++){
@@ -41,12 +42,13 @@ class automato{
                 if(c==estados[i])
                     return i;
             }
-            return NULL;
+            return -1;
         }
         
         bool setEstInicial(){
             char c = getchar();
-            if(CheckEstados(c)!=NULL){
+            while((getchar()) != '\n');
+            if(CheckEstados(c)!=-1){
                 estInicial = c;
                 return true;
             }
@@ -55,6 +57,7 @@ class automato{
         }
 
         void addEstadosFinais(){ // Adiciona novos estados finais com nome c na posicao i do vetor estadosFinais[]
+            cin >> ws;
             getline(cin, estadosFinais);
 
             for(i=0;i<estadosFinais.size();i++){
@@ -69,8 +72,9 @@ class automato{
             }
             estadosFinais.resize(estadosFinais.size()-clock);
             clock=0;
+
             for(i=0;i<estadosFinais.size();i++){
-                if(CheckEstados(estadosFinais)==NULL){
+                if(CheckEstados(estadosFinais[i])==-1){
                     clock++;
                     if(!(i==estadosFinais.size()-1)){
                         for(j=i;j<estadosFinais.size()-1;j++){
@@ -86,6 +90,7 @@ class automato{
         }
 
         void addAlfabeto(){ // Adiciona novos simbolos c na posicao i do vetor alfabeto[]
+            cin >> ws;
             getline(cin, alfabeto);
             for(i=0;i<alfabeto.size();i++){
 
@@ -102,20 +107,39 @@ class automato{
             clock=0;
         }
         
-        bool checkPar(char c, string *Par){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
-            for(int i=0;i<Par->size();i++){
-                if(c==Par[i]){
+        bool checkEstFinais(char c){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
+            for(int i=0;i<estadosFinais.size();i++){
+                if(c==estadosFinais[i]){
                     return true;
                 }
             }
             return false;
         }
 
+        int checkAlfabeto(char c){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
+            for(int i=0;i<alfabeto.size();i++){
+                if(c==alfabeto[i]){
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        void inicializarMatrix(){
+            for(i=0;i<estados.size();i++){
+                for(j=0;j<alfabeto.size();j++){
+                    matrizDelta[i][j] = ' '; 
+                }
+            }
+        }
+
         void funcTransicao(){ // adiciona novas relacoes entre os estados
             for(i=0;i<estados.size();i++){
                 for(j=0;j<alfabeto.size();j++){
                     printf("Transicao(%c, %c)\n",estados[i],alfabeto[j]);
-                    scanf("%c",&matrizAlpha[i][j]);
+                    matrizDelta[i][j] = getchar();
+                    while((getchar()) != '\n');
+                    
                 }
             }
 
@@ -123,20 +147,36 @@ class automato{
 
         void rodarAutomato(){
             bool travou=false;
-            char proxEst='', atualEst=estInicial,inputChar;
+            char proxEst=' ', atualEst=estInicial,inputChar;
             string input;
             i = CheckEstados(estInicial);
-            while((proxEst=='\0')&&!(checkPar(atualEst, estadosFinais)){
-                inputChar=getchar();
-                if(inputChar==''){
-                     proxEst='\0';
 
-}
-                else if(checkPar(inputChar, alfabeto){
-                     travou=1;
+            while((proxEst!='\0')&&!(checkEstFinais(atualEst))){
+                printf("Aguardando entrada do usuario...\n");
+                inputChar=getchar();
+                while((getchar()) != '\n');
+                if(inputChar==' '){
+                    proxEst='\0';
+                    travou = 0;
+
+                }       
+                else if(j=checkAlfabeto(inputChar)==-1){
+                    travou=1;
                 }
                 else{
-                     
+                    proxEst = matrizDelta[i][j];
+                    if(proxEst=' '){
+                        travou=1;
+                    }
+                }
+
+                if(travou=0){
+                    atualEst=proxEst;
+                    i = CheckEstados(atualEst);
+                }
+                else{
+                    printf("Falha na mudanca de estado!! input rejeitado\n");
+                    travou=0;
                 }
 
             }
@@ -147,8 +187,26 @@ class automato{
 
 int main(){
     automato a1;
+    int continuar = 1;
+
+    cout << "Adicionar alfabeto, separados por virgula" << endl;
     a1.addAlfabeto();
+    cout << "Adicionar estados, separados por virgula" << endl;
     a1.addEstados();
+    cout << "Qual e o estado inicial? " << endl;
+    while(!(a1.setEstInicial())){
+        cout << "Estado nao encontrado, digite novamente" << endl;
+    }
+    cout << "Adicionar estados finais, separados por virgula" << endl;
     a1.addEstadosFinais();
+    a1.inicializarMatrix();
+    cout << "Descreva a funcao de transicao" << endl;
     a1.funcTransicao();
+    while(continuar==1){
+        a1.rodarAutomato();
+        cout << "Deseja rodar novamente outra palavra? 1 para sim e 0 para nao " << endl;
+        cin >> continuar;
+    }
+        
+    
 }
