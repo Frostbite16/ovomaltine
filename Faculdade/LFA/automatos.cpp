@@ -36,17 +36,17 @@ class automato{
             clock=0;
         }
         
-        bool CheckEstados(char c){
+        int CheckEstados(char c){
             for(i=0;i<estados.size();i++){
                 if(c==estados[i])
-                    return true;
+                    return i;
             }
-            return false;
+            return NULL;
         }
         
         bool setEstInicial(){
             char c = getchar();
-            if(CheckEstados(c)){
+            if(CheckEstados(c)!=NULL){
                 estInicial = c;
                 return true;
             }
@@ -70,7 +70,7 @@ class automato{
             estadosFinais.resize(estadosFinais.size()-clock);
             clock=0;
             for(i=0;i<estadosFinais.size();i++){
-                if(!(CheckEstados(estadosFinais[i]))){
+                if(CheckEstados(estadosFinais)==NULL){
                     clock++;
                     if(!(i==estadosFinais.size()-1)){
                         for(j=i;j<estadosFinais.size()-1;j++){
@@ -102,8 +102,8 @@ class automato{
             clock=0;
         }
         
-        bool checkPar(char c, char *Par){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
-            for(int i=0;i<10;++i){
+        bool checkPar(char c, string *Par){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
+            for(int i=0;i<Par->size();i++){
                 if(c==Par[i]){
                     return true;
                 }
@@ -119,6 +119,27 @@ class automato{
                 }
             }
 
+        }
+
+        void rodarAutomato(){
+            bool travou=false;
+            char proxEst='', atualEst=estInicial,inputChar;
+            string input;
+            i = CheckEstados(estInicial);
+            while((proxEst=='\0')&&!(checkPar(atualEst, estadosFinais)){
+                inputChar=getchar();
+                if(inputChar==''){
+                     proxEst='\0';
+
+}
+                else if(checkPar(inputChar, alfabeto){
+                     travou=1;
+                }
+                else{
+                     
+                }
+
+            }
         }
 
 
