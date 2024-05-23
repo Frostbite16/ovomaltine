@@ -22,11 +22,11 @@ class automato{
             cin >> ws;
             getline(cin, estados);
 
-            for(int i=0;i<estados.size();i++){
+            for(unsigned i=0;i<estados.size();i++){
                 if(estados[i]==','){
 
                     clock++;
-                    for(int j=i;j<estados.size();j++){
+                    for(unsigned j=i;j<estados.size();j++){
                         estados[j]=estados[j+1];
 
                     }
@@ -38,7 +38,7 @@ class automato{
         }
         
         int CheckEstados(char c){
-            for(int i=0;i<estados.size();i++){
+            for(unsigned i=0;i<estados.size();i++){
                 if(c==estados[i])
                     return i;
             }
@@ -60,12 +60,12 @@ class automato{
             cin >> ws;
             getline(cin, estadosFinais);
 
-            for(int i=0;i<estadosFinais.size();i++){
+            for(unsigned i=0;i<estadosFinais.size();i++){
 
                 if(estadosFinais[i]==','){
 
                     clock++;
-                    for(int j=i;j<estadosFinais.size();j++){
+                    for(unsigned j=i;j<estadosFinais.size();j++){
                         estadosFinais[j]=estadosFinais[j+1];
                     }
                 }
@@ -73,11 +73,11 @@ class automato{
             estadosFinais.resize(estadosFinais.size()-clock);
             clock=0;
 
-            for(int i=0;i<estadosFinais.size();i++){
+            for(unsigned i=0;i<estadosFinais.size();i++){
                 if(CheckEstados(estadosFinais[i])==-1){
                     clock++;
                     if(!(i==estadosFinais.size()-1)){
-                        for(int j=i;j<estadosFinais.size()-1;j++){
+                        for(unsigned j=i;j<estadosFinais.size()-1;j++){
                             estadosFinais[j]=estadosFinais[j+1];
                         }
                     }
@@ -92,12 +92,12 @@ class automato{
         void addAlfabeto(){ // Adiciona novos simbolos c na posicao i do vetor alfabeto[]
             cin >> ws;
             getline(cin, alfabeto);
-            for(int i=0;i<alfabeto.size();i++){
+            for(unsigned i=0;i<alfabeto.size();i++){
 
                 if(alfabeto[i]==','){
 
                     clock++;
-                    for(int j=i;j<alfabeto.size();j++){
+                    for(unsigned j=i;j<alfabeto.size();j++){
 
                         alfabeto[j]=alfabeto[j+1];
                     }
@@ -108,7 +108,7 @@ class automato{
         }
         
         bool checkEstFinais(char c){ // Checa se um simbolo já está no vetor estadosFinais, caso esteja retorna verdadeiro
-            for(int i=0;i<estadosFinais.size();i++){
+            for(unsigned i=0;i<estadosFinais.size();i++){
                 if(c==estadosFinais[i]){
                     return true;
                 }
@@ -117,7 +117,7 @@ class automato{
         }
 
         int checkAlfabeto(char c){ // Checa se um simbolo já está no vetor alfabeto, caso esteja retorna o indice
-            for(int i=0;i<alfabeto.size();i++){
+            for(unsigned i=0;i<alfabeto.size();i++){
                 if(c==alfabeto[i]){
                     return i;
                 }
@@ -126,17 +126,16 @@ class automato{
         }
 
         void inicializarMatrix(){
-            for(int i=0;i<estados.size();i++){
-                for(int j=0;j<alfabeto.size();j++){
+            for(unsigned i=0;i<estados.size();i++){
+                for(unsigned j=0;j<alfabeto.size();j++){
                     matrizDelta[i][j] = ' '; 
                 }
             }
         }
 
         void funcTransicao(){ // adiciona novas relacoes entre os estados
-            char c;
-            for(int i=0;i<estados.size();i++){
-                for(int j=0;j<alfabeto.size();j++){
+            for(unsigned i=0;i<estados.size();i++){
+                for(unsigned j=0;j<alfabeto.size();j++){
                     printf("Transicao(%c, %c)\n",estados[i],alfabeto[j]);
                     matrizDelta[i][j] = getchar();
                     if(CheckEstados(matrizDelta[i][j])==-1){
