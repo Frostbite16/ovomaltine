@@ -5,7 +5,8 @@
 // Implementar operador >=
 // Implementar operador - (Unário) Inverte o sinal
 // Implementar operador - (binario)
-// Implementar operador -- (Pos);
+// Implementar operador -- (Pos); feito
+// Implementar operador -- (Pre); feito
 
 
 #include <iostream>
@@ -66,6 +67,17 @@ class frac{
             return num*other.den < den*other.num;
         }
 
+        frac operator --(){
+            num-=den;
+            return frac(num,den);
+        }
+
+        frac operator --(int){
+            num-=den;
+            return frac(num+den,den);
+        }
+        
+                           
 
 };
 
