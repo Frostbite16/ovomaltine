@@ -11,7 +11,7 @@ class automato{
     string PalavraAtual, palavraAceita; 
     char matrizDelta[10][10],estInicial;
     int estadoSize=0, alfaSize=0, clock=0;
-    int i,j,k;
+ 
     
     public:
         
@@ -22,11 +22,11 @@ class automato{
             cin >> ws;
             getline(cin, estados);
 
-            for(i=0;i<estados.size();i++){
+            for(int i=0;i<estados.size();i++){
                 if(estados[i]==','){
 
                     clock++;
-                    for(j=i;j<estados.size();j++){
+                    for(int j=i;j<estados.size();j++){
                         estados[j]=estados[j+1];
 
                     }
@@ -38,7 +38,7 @@ class automato{
         }
         
         int CheckEstados(char c){
-            for(i=0;i<estados.size();i++){
+            for(int i=0;i<estados.size();i++){
                 if(c==estados[i])
                     return i;
             }
@@ -60,12 +60,12 @@ class automato{
             cin >> ws;
             getline(cin, estadosFinais);
 
-            for(i=0;i<estadosFinais.size();i++){
+            for(int i=0;i<estadosFinais.size();i++){
 
                 if(estadosFinais[i]==','){
 
                     clock++;
-                    for(j=i;j<estadosFinais.size();j++){
+                    for(int j=i;j<estadosFinais.size();j++){
                         estadosFinais[j]=estadosFinais[j+1];
                     }
                 }
@@ -73,11 +73,11 @@ class automato{
             estadosFinais.resize(estadosFinais.size()-clock);
             clock=0;
 
-            for(i=0;i<estadosFinais.size();i++){
+            for(int i=0;i<estadosFinais.size();i++){
                 if(CheckEstados(estadosFinais[i])==-1){
                     clock++;
                     if(!(i==estadosFinais.size()-1)){
-                        for(j=i;j<estadosFinais.size()-1;j++){
+                        for(int j=i;j<estadosFinais.size()-1;j++){
                             estadosFinais[j]=estadosFinais[j+1];
                         }
                     }
@@ -92,12 +92,12 @@ class automato{
         void addAlfabeto(){ // Adiciona novos simbolos c na posicao i do vetor alfabeto[]
             cin >> ws;
             getline(cin, alfabeto);
-            for(i=0;i<alfabeto.size();i++){
+            for(int i=0;i<alfabeto.size();i++){
 
                 if(alfabeto[i]==','){
 
                     clock++;
-                    for(j=i;j<alfabeto.size();j++){
+                    for(int j=i;j<alfabeto.size();j++){
 
                         alfabeto[j]=alfabeto[j+1];
                     }
@@ -107,7 +107,7 @@ class automato{
             clock=0;
         }
         
-        bool checkEstFinais(char c){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
+        bool checkEstFinais(char c){ // Checa se um simbolo já está no vetor estadosFinais, caso esteja retorna verdadeiro
             for(int i=0;i<estadosFinais.size();i++){
                 if(c==estadosFinais[i]){
                     return true;
@@ -116,7 +116,7 @@ class automato{
             return false;
         }
 
-        int checkAlfabeto(char c){ // Checa se um simbolo já está na em um vetor Par, caso esteja retorna falso
+        int checkAlfabeto(char c){ // Checa se um simbolo já está no vetor alfabeto, caso esteja retorna o indice
             for(int i=0;i<alfabeto.size();i++){
                 if(c==alfabeto[i]){
                     return i;
@@ -126,19 +126,24 @@ class automato{
         }
 
         void inicializarMatrix(){
-            for(i=0;i<estados.size();i++){
-                for(j=0;j<alfabeto.size();j++){
+            for(int i=0;i<estados.size();i++){
+                for(int j=0;j<alfabeto.size();j++){
                     matrizDelta[i][j] = ' '; 
                 }
             }
         }
 
         void funcTransicao(){ // adiciona novas relacoes entre os estados
-            for(i=0;i<estados.size();i++){
-                for(j=0;j<alfabeto.size();j++){
+            char c;
+            for(int i=0;i<estados.size();i++){
+                for(int j=0;j<alfabeto.size();j++){
                     printf("Transicao(%c, %c)\n",estados[i],alfabeto[j]);
                     matrizDelta[i][j] = getchar();
+                    if(CheckEstados(matrizDelta[i][j])==-1){
+                        matrizDelta[i][j] = '-';
+                    }
                     while((getchar()) != '\n');
+                    
                     
                 }
             }
@@ -149,35 +154,47 @@ class automato{
             bool travou=false;
             char proxEst=' ', atualEst=estInicial,inputChar;
             string input;
-            i = CheckEstados(estInicial);
-
-            while((proxEst!='\0')&&!(checkEstFinais(atualEst))){
+            int i = CheckEstados(estInicial),j;
+            printf("Estado atual: %c \n", estados[i]);
+            while((proxEst!='\0')||!(checkEstFinais(atualEst))){
                 printf("Aguardando entrada do usuario...\n");
                 inputChar=getchar();
                 while((getchar()) != '\n');
-                if(inputChar==' '){
-                    proxEst='\0';
-                    travou = 0;
-
-                }       
-                else if(j=checkAlfabeto(inputChar)==-1){
+                j=checkAlfabeto(inputChar);
+                if(j==-1){
                     travou=1;
+                    
                 }
                 else{
+                    
                     proxEst = matrizDelta[i][j];
-                    if(proxEst=' '){
+                    
+                    if(proxEst=='-'){
                         travou=1;
                     }
                 }
 
-                if(travou=0){
+                if((travou==0)&&(inputChar!='-')){
                     atualEst=proxEst;
                     i = CheckEstados(atualEst);
                 }
-                else{
+                else if(inputChar!='-'){
                     printf("Falha na mudanca de estado!! input rejeitado\n");
                     travou=0;
                 }
+                
+                printf("Estado atual: %c \n", estados[i]);
+
+                if(inputChar=='-'){
+                    proxEst='\0';
+                    travou = 0;
+
+                }
+                
+                if(checkEstFinais(atualEst)){
+                    cout << "Estado final Selecionado digite '-' para terminar" << endl;
+                }     
+                
 
             }
         }
