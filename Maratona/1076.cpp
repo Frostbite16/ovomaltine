@@ -2,6 +2,37 @@
 
 using namespace std;
 
+
+int visited(int v, int *vis, int c){
+
+
+    for(int i=0;i<v;i){
+        if(c==vis[v]){
+            return true;
+        }
+    }
+    return false;
+
+}
+
+int acharCaminho(int curr, int *matrix[], int v, int ant){
+    int i=v, cam=0, vis[100];
+    for(int i=0;i<v;i){
+        vis[i] = 0;
+    }
+    while(i>=0){
+
+        if((matrix[curr][i]==1)&&(i!=ant)){
+            ant=curr;
+            curr=i;
+            cam += acharCaminho(curr, matrix, v, ant);
+            cam++;
+        }
+
+    }
+
+}
+
 int main(){
 
     int t,n;
@@ -23,8 +54,11 @@ int main(){
         for(int z=0;z<a;z++){
             cin >> b >> c; 
             matrix[b][c] = 1;
-            total+=2;
         }
+
+        
+        
+
         for(int j=0;j<v;j++){
             for(int k=0;k<v;k++){
                 if((matrix[j][k]==matrix[k][j])&&(matrix[j][k]!=0)){
