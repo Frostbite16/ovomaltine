@@ -100,11 +100,13 @@ int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente en
 }
 
 listaDup* buscaListDup(listaDup* head, int x){
-	listaDup* c = NULL;
-	if(head!=NULL){
-		while(c->prox!=NULL){
+	listaDup* c = head;
+	while(c!=NULL){
+		if(c->data==x){
+			return 1;
 		}
 	}
+	return 0;
 }
 
 
