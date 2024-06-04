@@ -55,10 +55,24 @@ listaSim* buscaListSimOrd(listaSim* h, int x){
 	return p;
 }
 
-int removeListSimOrd(listaSim* h, int x){
-	
+int removeListSimOrd(listaSim* h, int x){//TODO
+	listaSim *c, *p;
+	if(h!=NULL){
+		while((p->data<x)||(p->prox!=NULL)){
+			if(p->data==x){
+				if(p==h){
+					h=p->prox;
+					delete(p);
+					return 1;
+				}
 
-
+			}
+		}
+		if(p->data!=x){
+			return NULL;
+		}
+	}
+	return 0;
 
 }
 

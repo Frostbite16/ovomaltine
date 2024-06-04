@@ -20,9 +20,18 @@ int main(){
             if((palavra[j]>=65)&&(palavra[j]<=90)||(palavra[j]>=97)&&(palavra[j]<=122)){
                 palavra[j]+=3;
             }
+            if(j<palavra.size()/2){
+                aux=palavra[j];
+                palavra[j] = palavra[palavra.size()-j-1];
+                palavra[palavra.size()-j-1] = aux;
+            }
+            if(j>=palavra.size()/2){
+                palavra[j]--;
+                
+            }
         }
         
-        for(int j=0; j<palavra.size()/2;j++){
+        /*for(int j=0; j<palavra.size()/2;j++){
             aux = palavra[j];
             palavra[j] = palavra[palavra.size()-j-1];
             palavra[palavra.size()-1-j] = aux;
@@ -30,7 +39,7 @@ int main(){
         
         for(int j=palavra.size()/2; j<palavra.size();j++){
             palavra[j]--;
-        }
-        cout << palavra;
+        }*/
+        cout << palavra << endl;
     }
 }
