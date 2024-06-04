@@ -1,4 +1,4 @@
-//#include "\gfx\gfx.h"
+#include "gfx/gfx.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -25,7 +25,7 @@ typedef struct listaDup{ //estrutura de uma lista duplamente encadeada
 int AddlistSimOrd(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca
 	listaSim *c = malloc(sizeof(listaSim)), *p=h;
 	c->data = x;
-	if(h=NULL){
+	if(h==NULL){
 		h=c;
 		c->prox = NULL;
 		return 1;
@@ -40,7 +40,7 @@ int AddlistSimOrd(listaSim* h, int x){ // Insercao de uma lista simplismente enc
 
 listaSim* buscaListSimOrd(listaSim* h, int x){
 	listaSim *p = h;
-	if(h=NULL){
+	if(h==NULL){
 		return NULL;
 	}
 	while((p->data<x)||(p->prox!=NULL)){
@@ -55,25 +55,25 @@ listaSim* buscaListSimOrd(listaSim* h, int x){
 	return p;
 }
 
-int removeListSimOrd(listaSim* h, int x){//TODO
-	listaSim *c, *p;
+int removeListSimOrd(listaSim* h, int x){
+	listaSim *c = NULL, *p = h;
 	if(h!=NULL){
-		while((p->data<x)||(p->prox!=NULL)){
-			if(p->data==x){
-				if(p==h){
-					h=p->prox;
-					delete(p);
-					return 1;
-				}
-
+		c = p;
+		while((p->prox!=NULL)&&(p->data<=x)){
+			c = p;
+			p=p->prox;
+		}
+		if(p->data==x){
+			c->prox = p->prox;
+			if(p==h){
+				h=p->prox;
 			}
+			free(p);
+			return 1;
 		}
-		if(p->data!=x){
-			return NULL;
-		}
+		return 0;
 	}
 	return 0;
-
 }
 
 int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente encadeada com no cabeca
@@ -97,7 +97,16 @@ int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente en
 	c->prox = NULL;
 	c->ant = p;
 	return 1;
+}
 
+listaDup* buscaListDup(listaDup* head, int x){
+	listaDup* c = head;
+	while(c!=NULL){
+		if(c->data==x){
+			return 1;
+		}
+	}
+	return 0;
 }
 
 
