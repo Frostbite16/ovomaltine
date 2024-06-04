@@ -1,4 +1,4 @@
-#include "gfx/gfx.h"
+//#include "gfx/gfx.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -76,6 +76,22 @@ int removeListSimOrd(listaSim* h, int x){
 	return 0;
 }
 
+int AddlistSimOrdCirc(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca
+	listaSim *c = malloc(sizeof(listaSim)), *p=h;
+	c->data = x;
+	if(h==NULL){
+		h=c;
+		c->prox = h;
+		return 1;
+	}
+	while((p->prox->data<=x)&&(p->prox!=h)){
+		p = p->prox;
+	}
+	c->prox = p->prox;
+	p->prox = c;
+	return 1;
+}
+
 int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente encadeada com no cabeca
 
 	int i;
@@ -99,10 +115,26 @@ int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente en
 	return 1;
 }
 
+
+
 listaDup* buscaListDup(listaDup* head, int x){
 	listaDup* c = head;
 	while(c!=NULL){
 		if(c->data==x){
+			return 1;
+		}
+		c = c->prox;
+	}
+	return 0;
+}
+
+int buscaListDup(listaDup* head, int x){
+	listaDup* c = head;
+	while(c!=NULL){
+		if(c->data==x){
+			c->ant->prox = c->prox;
+			if(c->prox!=NULL) c->prox->ant = c->ant;
+			free(c);
 			return 1;
 		}
 	}
