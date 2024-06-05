@@ -23,3 +23,7 @@ bin/
 
 #ignore Test File
 C/Testes.c
+c++/Testes.cpp
+
+#VSCODE STUFF
+/.vscode

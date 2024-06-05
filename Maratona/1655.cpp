@@ -9,6 +9,7 @@ int main(){
     int a,b,p;
     int i,j,k;
     double distancia[100][100];
+    double grafo[100][100];
     int maior[100],ma;
 
     cin >> n >> m;
@@ -16,6 +17,7 @@ int main(){
     for(i=0; i<=n; i++){
         for(j=0; j<=n; j++){
             distancia[i][j] = 100000;
+            grafo[i][j] = 0;
         }
     }
     for(i=0; i<m; i++){
@@ -32,8 +34,16 @@ int main(){
                 if((distancia[i][j] > (distancia[i][k] + distancia[k][j]))&&(distancia[i][k]<100000)&&(distancia[k][j]<100000)){
                     distancia[i][j] = (distancia[i][k] + distancia[k][j]);
                 }
+                
             }
+            
+            
+            
         }
+        maior[k] = distancia[1][n];
+
+        
+        
     }
 
     for(i=1; i<=n; i++){
@@ -41,9 +51,10 @@ int main(){
             /*if((distancia[i][j]!=0)&&(distancia[i][j]<100)){
                distancia[i][j] = 100-distancia[i][j];
             }*/
-            cout << distancia[i][j] << " ";
+           //cout << distancia[i][j] << " ";
         }
-        cout << endl;
+        cout << maior[i] << " ";
+       cout << endl;
     }
 
     

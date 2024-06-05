@@ -1,4 +1,3 @@
-//#include "gfx/gfx.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,11 +7,11 @@ typedef struct listaSim{ //estrutura de uma lista simplismente encadeada
 }listaSim;
 
 typedef struct listaSimPilha{ //estrutura de uma Pilha
-	struct listaSim* LastNode;
+	struct listaSimPilha* LastNode;
 }Pilha;
 
 typedef struct listaSimFila{ //estrutura de uma Fila
-	struct listaSim* FirstNode, *LastNode;
+	struct listaSimFila *FirstNode, *LastNode;
 }Fila;
 
 typedef struct listaDup{ //estrutura de uma lista duplamente encadeada
@@ -411,10 +410,3 @@ int removeQueue(Fila queue){ // remoção de um nó em uma fila
 	}
 	return 0;
 }
-
-
-
-
-
-
-
