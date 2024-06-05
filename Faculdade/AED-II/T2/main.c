@@ -76,7 +76,9 @@ int removeListSimOrd(listaSim* h, int x){
 	return 0;
 }
 
-int AddlistSimOrdCirc(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca
+
+
+int AddlistSimOrdCirc(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca e circular
 	listaSim *c = malloc(sizeof(listaSim)), *p=h;
 	c->data = x;
 	if(h==NULL){
@@ -91,6 +93,45 @@ int AddlistSimOrdCirc(listaSim* h, int x){ // Insercao de uma lista simplismente
 	p->prox = c;
 	return 1;
 }
+
+listaSim* buscaListSimOrdCirc(listaSim* h, int x){
+	listaSim *p = h;
+	if(h==NULL){
+		return NULL;
+	}
+	while((p->data<x)||(p->prox!=h)){
+		if(p->data==x){
+			return p;
+		}
+		p = p->prox; 
+	}
+	if(p->data!=x){
+		return NULL;
+	}
+	return p;
+}
+
+int removeListSimOrd(listaSim* h, int x){
+	listaSim *c = NULL, *p = h;
+	if(h!=NULL){
+		c = p;
+		while((p->prox!=h)&&(p->data<=x)){
+			c = p;
+			p=p->prox;
+		}
+		if(p->data==x){
+			c->prox = p->prox;
+			if(p==h){
+				h=p->prox;
+			}
+			free(p);
+			return 1;
+		}
+		return 0;
+	}
+	return 0;
+}
+
 
 int insertListDup(listaDup* head, int x){ // Insercao de uma lista duplamente encadeada com no cabeca
 
