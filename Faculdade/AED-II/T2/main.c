@@ -8,11 +8,11 @@ typedef struct listaSim{ //estrutura de uma lista simplismente encadeada
 }listaSim;
 
 typedef struct listaSimPilha{ //estrutura de uma Pilha
-	struct listaSimPilha* LastNode;
+	struct listaSim* LastNode;
 }Pilha;
 
 typedef struct listaSimFila{ //estrutura de uma Fila
-	struct listaSimFila *FirstNode, *LastNode;
+	struct listaSim* FirstNode, *LastNode;
 }Fila;
 
 typedef struct listaDup{ //estrutura de uma lista duplamente encadeada
