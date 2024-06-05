@@ -35,20 +35,20 @@ typedef struct listaDup{ //estrutura de uma lista duplamente encadeada
 			itera p até um valor maior ou igual x, ou até o próximo nó for nulo
 			c é inserido entre p e o proximo no depois de p
 */
-int addlistSimOrd(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca
+listaSim *addlistSimOrd(listaSim* h, int x){ // Insercao de uma lista simplismente encadeada e ordenada sem no cabeca
 	listaSim *c = malloc(sizeof(listaSim)), *p=h; 
 	c->data = x;
-	if(h==NULL){
+	if((h==NULL)||(h->data>=x)){
+		c->prox = h;
 		h=c;
-		c->prox = NULL;
-		return 1;
+		return h;
 	}
-	while((p->prox->data<=x)&&(p->prox!=NULL)){
+	while((p->data<=x)&&(p->prox!=NULL)){
 		p = p->prox;
 	}
 	c->prox = p->prox;
 	p->prox = c;
-	return 1;
+	return h;
 }
 
 
@@ -412,6 +412,16 @@ int removeQueue(Fila queue){ // remoção de um nó em uma fila
 	return 0;
 }
 
+int main(){
+	listaSim *h = NULL;
+	h = addlistSimOrd(h,3);
+	h = addlistSimOrd(h,7);
+	h = addlistSimOrd(h,2);
+	h = addlistSimOrd(h,4);
+	
+
+
+}
 
 
 
