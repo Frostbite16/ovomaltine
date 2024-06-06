@@ -46,6 +46,8 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "fstream": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "stdlib.h": "c",
+        "gfx.h": "c"
     }
 }

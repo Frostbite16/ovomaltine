@@ -1,4 +1,4 @@
-//#include "gfx/gfx.h"
+#include "gfx/gfx.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -67,7 +67,7 @@ listaSim *addlistSimOrd(listaSim* h, int x){ // Insercao de uma lista simplismen
 */
 listaSim* buscaListSimOrd(listaSim* h, int x){ // Busca de um elemento em uma lista simplismente encadeada ordenada
 	listaSim *p = h;
-	if(h==NULL){
+	if((h==NULL)){
 		return NULL;
 	}
 	while((p->data<=x)||(p->prox!=NULL)){
@@ -133,20 +133,29 @@ int removeListSimOrd(listaSim* h, int x){ // remoção de um no de uma lista sim
 			itera p até um valor maior ou igual x, ou até o próximo nó for igual a h
 			c é inserido entre p e o proximo no depois de p
 */
-int addlistSimOrdCirc(listaSim* h, int x){ // Insercao de um no em uma lista simplismente encadeada e ordenada sem no cabeca e circular
+listaSim* addlistSimOrdCirc(listaSim* h, int x){ // Insercao de um no em uma lista simplismente encadeada e ordenada sem no cabeca e circular
 	listaSim *c = malloc(sizeof(listaSim)), *p=h;
 	c->data = x;
 	if(h==NULL){
+		c->prox = NULL;
 		h=c;
+		return h;
+	}
+	else if(h->data>=x){
 		c->prox = h;
-		return 1;
+		while(p->prox!=h){
+			p = p->prox;
+		}
+		h=c;
+		p->prox=h;
+		return h;
 	}
 	while((p->prox->data<=x)&&(p->prox!=h)){
 		p = p->prox;
 	}
 	c->prox = p->prox;
 	p->prox = c;
-	return 1;
+	return h;
 }
 
 /*
@@ -419,6 +428,7 @@ int main(){
 	h = addlistSimOrd(h,2);
 	h = addlistSimOrd(h,4);
 	
+
 
 
 }
