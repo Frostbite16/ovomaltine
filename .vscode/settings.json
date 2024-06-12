@@ -48,6 +48,7 @@
         "fstream": "c",
         "sstream": "c",
         "stdlib.h": "c",
-        "gfx.h": "c"
+        "gfx.h": "c",
+        "stdio.h": "c"
     }
 }

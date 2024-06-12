@@ -421,6 +421,12 @@ int removeQueue(Fila queue){ // remoção de um nó em uma fila
 	return 0;
 }
 
+void restartScreen(){
+	gfx_filled_ellipse();
+
+}
+
+
 int main(){
 	listaSim *h = NULL;
 	h = addlistSimOrd(h,3);
