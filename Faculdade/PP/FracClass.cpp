@@ -84,7 +84,6 @@ class frac{
 int main(){
 
     frac f1(1,3), f2(3,-1);
-
     std::cout << f1.getNum() << " " << f1.getDen() << "\n";
     std::cout << (f1<f2) << "\n";
 
