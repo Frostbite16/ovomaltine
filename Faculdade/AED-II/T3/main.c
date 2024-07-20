@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "gfx/gfx.h"
-#define SCREEN_SIZEX 1000
+#define SCREEN_SIZEX 1200
 #define SCREEN_SIZEY 800
 #define NODE_SIZEX 17
 #define NODE_SIZEY 14
@@ -291,7 +291,7 @@ void gfxCreateTree(searchTreeNode* currentNode, unsigned rate, unsigned X, unsig
 
 int main(){
 
-   /* searchTreeNode *root = NULL, *temp = NULL;
+    searchTreeNode *root = NULL, *temp = NULL;
     
 	FILE* binFile = openBinFile("binfile.bin", "wb");
     insertNode(&root, 10);
@@ -308,13 +308,13 @@ int main(){
 	insertNode(&root, 95);
 	writeBinFile(binFile, root);
 	fclose(binFile);
-	binFile = openBinFile("binfile.bin", "rb");
+	binFile = openBinFile("15.bin", "rb");
     readBinFile(binFile, &temp);
 
     gfx_init(SCREEN_SIZEX, SCREEN_SIZEY, "Trabalho 3");
-    gfxCreateTree(root, SCREEN_SIZEX/4,SCREEN_SIZEX/2, NODE_INTERVAL_SIZE, -1);
+    gfxCreateTree(temp, SCREEN_SIZEX/4,SCREEN_SIZEX/2, NODE_INTERVAL_SIZE, -1);
     gfx_paint();
-    sleep(5);
+    sleep(50);
     gfx_quit();
 
   
@@ -322,9 +322,9 @@ int main(){
     freeTree(&root);
 	freeTree(&temp);
     
-    return 0;*/
+    return 0;
 
-	searchTreeNode *root = NULL;
+	//searchTreeNode *root = NULL;
 	unsigned short esc=0;
 	int num;
 
