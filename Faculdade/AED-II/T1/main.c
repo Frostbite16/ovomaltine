@@ -1,4 +1,4 @@
-#include "gfx/gfx.h" /* gfx_rectangle(), gfx_ellipse(), gfx_innit(), gfx_quit(), gfx_paint*/
+#include "./gfx/gfx.h" /* gfx_rectangle(), gfx_ellipse(), gfx_innit(), gfx_quit(), gfx_paint*/
 #include <unistd.h> /*sleep()*/
 #include <math.h> /*sen(), MATH_PI, floor()*/
  

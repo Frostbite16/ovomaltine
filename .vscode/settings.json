@@ -49,6 +49,7 @@
         "sstream": "c",
         "stdlib.h": "c",
         "gfx.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "libc-header-start.h": "c"
     }
 }
