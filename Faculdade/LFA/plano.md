@@ -5,7 +5,7 @@ O programa deve conseguir ler uma lista de estados,
 e uma lista de alfabetos permitidos. O programa 
 deve ler um estado inicial e uma lista de estados
 finais. uma lista de transição deve ser feita
-com aceitando um elemento do alfabeto e um elemento
+aceitando um elemento do alfabeto e um elemento
 dos estados, essa lista de transição pode retornar
 mais que um estado, desde que seja um estado contido
 na lista de estados.
