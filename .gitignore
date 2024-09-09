@@ -27,3 +27,6 @@ c++/Testes.cpp
 
 #VSCODE STUFF
 /.vscode
+
+#ignore ssh keys
+*.pub

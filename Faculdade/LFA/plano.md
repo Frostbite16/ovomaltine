@@ -23,10 +23,10 @@ transição para cada estado atual.
 
 # Etapas
 
-[] Criar uma estrutura dinâmica para receber os dados
-[] Função para desalocar essa estrutura
-[] Criar função de busca 
-[] Criar a função de transição, que retorne varios 
+[X] Criar uma estrutura dinâmica para receber os dados
+[X] Função para desalocar essa estrutura
+[X] Criar função de busca 
+[X] Criar a função de transição, que retorne varios 
 estados
 
 [] Inicio da criação do programa.
