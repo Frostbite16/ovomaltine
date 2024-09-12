@@ -72,7 +72,7 @@ void guardarFuncTransicao(char* matrix[NUM_STATES][NUM_ALPHABET], size_t indexSt
 	matrix[indexStates][indexAlphabet] = nextStates;
 }
 void mudarEstado(char entrada, char estadoAtual[50], char* matrix[NUM_STATES][NUM_ALPHABET], array* estados, array* alfabeto){
-	size_t i=0, indexStates, indexEntrada, tamEstadoTotal = 0, check;
+	size_t i=0, indexStates, indexEntrada, tamEstadoTotal = 0;
 	char buffer[50] = {0x0};
 	indexEntrada = searchArray(alfabeto, entrada);
 	while(estadoAtual[i] != '\0'){
@@ -95,27 +95,7 @@ int main(){
 	initialize(&alfabeto);
 	initialize(&estadosFinais);
 
-	/*
-	for(size_t i=0; i<=3; i++){
-		insertData(&estados, 97+i);		
-	}
-	guardarFuncTransicao( tabelaTransic, 0, 0, "ad");
-	guardarFuncTransicao(tabelaTransic, 0, 1, "ab");
-	guardarFuncTransicao(tabelaTransic, 1, 0, "-");
-	guardarFuncTransicao(tabelaTransic, 1, 1, "c");
-	guardarFuncTransicao(tabelaTransic, 2, 0, "-");
-	guardarFuncTransicao(tabelaTransic, 2, 1, "-");
-	guardarFuncTransicao(tabelaTransic, 3, 0, "b");
-	guardarFuncTransicao(tabelaTransic, 3, 1, "-");
-	printf("%s | %s | %s\n", tabelaTransic[0][0], tabelaTransic[0][1], tabelaTransic[1][0]);
-	mudarEstado('0', estadoAtual, tabelaTransic, &estados, &alfabeto);
-	mudarEstado('0', estadoAtual, tabelaTransic, &estados, &alfabeto);	
-	mudarEstado('1', estadoAtual, tabelaTransic, &estados, &alfabeto);	
-
-	printf("%s", estadoAtual);*/
-	
-	// Inicio do programa // 
-	size_t esc=0, clock, check, epsilon, alfabetoSize;
+	size_t esc=0, clock, check, epsilon;
 	char data, entrada[50], buffer[50]={0x0};
 
 	do{
@@ -125,7 +105,7 @@ int main(){
 				printf("Digite somente um simbolo separado por virgula: ");
 				while(getchar()!='\n');
 				scanf("%s", entrada);
-				for(int i=0; entrada[i]!='\0'; i++){
+				for(size_t i=0; entrada[i]!='\0'; i++){
 					if((entrada[i])!='-'&&(entrada[i]!=',')&&(entrada[i]!=' '))
 						insertData(&estados, entrada[i]);
 				}
@@ -134,7 +114,7 @@ int main(){
 				printf("Digite somente um simbolo separado por virgula: ");
 				while(getchar()!='\n');
 				scanf("%s", entrada);
-				for(int i=0; entrada[i]!='\0'; i++){
+				for(size_t i=0; entrada[i]!='\0'; i++){
 					if((entrada[i]!=',')&&(entrada[i]!=' '))
 						insertData(&alfabeto, entrada[i]);
 				}
@@ -143,7 +123,7 @@ int main(){
 				printf("Digite os Estados Finais, separados por virgula: ");
 				while(getchar()!='\n');
 				scanf("%s", entrada);
-				for(int i=0; entrada[i]!='\0'; i++){
+				for(size_t i=0; entrada[i]!='\0'; i++){
 					if((entrada[i] != ',')&&(searchArray(&estados, entrada[i])!=NUM_STATES+NUM_ALPHABET+1)){
 						insertData(&estadosFinais, entrada[i]);
 					}
@@ -161,7 +141,6 @@ int main(){
 				printf("Deseja adicionar um epsilon ao automato [1] sim [0] não: ");
 				while(getchar()!='\n');
 				scanf("%lu", &epsilon);
-				esc=1;
 				while(esc!=1){
 					printf("Insira um simbolo que não está no alfabeto");
 					while(getchar()!='\n');
@@ -179,8 +158,8 @@ int main(){
 				// Matrix de transição
 				printf("Montar a matrix de transicao\n");
 				printf("Digite cada estado separado por virgula\n");
-				for(int i=0; i<estados.size; i++){	
-					for(int j=0; j<=alfabeto.size; j++){
+				for(size_t i=0; i<estados.size; i++){	
+					for(size_t j=0; j<alfabeto.size; j++){
 						buffer[0] = '\0';
 						if((epsilon!=1)||(j<alfabeto.size)){
 							printf("Do estado %c com a entrada %c: \n", estados.data[i], alfabeto.data[j]);
@@ -194,7 +173,7 @@ int main(){
 							while(getchar()!='\n');
 							scanf("%lu",&esc);
 						}
-						if((esc==1)&&(epsilon==1)&&(j=alfabeto.size)||(epsilon!=1)){
+						if(((esc==1)&&(epsilon==1)&&(j=alfabeto.size))||(epsilon!=1)){
 							if(esc==1){
 								printf("Digite os estados destino do estado %c com transição epsilon", estados.data[i]);
 								while(getchar()!='\n');
