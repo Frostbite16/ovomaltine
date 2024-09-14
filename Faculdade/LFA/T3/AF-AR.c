@@ -209,7 +209,7 @@ int main(){
 				scanf("%lu", &esc);
 				while(esc==1){
 					while(getchar()!='\n');
-					printf("Insira um simbolo que não está no alfabto: ");
+					printf("Insira um simbolo que não está no alfabeto: ");
 					scanf("%s",entrada);
 					if(searchArray(&alfabeto, entrada)!=-1){
 						esc=1;
