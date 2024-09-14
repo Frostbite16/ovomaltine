@@ -3,6 +3,7 @@
 #include<string.h>
 
 #define MAX_PALAVRA 20
+#define NO_TRANSICAO -1
 
 
 typedef struct array{
@@ -10,8 +11,19 @@ typedef struct array{
 	size_t size;
 }array;
 
+typedef struct transition{
+	int* states;
+	size_t size;
+} transition;
+
 void initialize(array* elemArray){
 	elemArray->size = 0;
+	elemArray->data = NULL;
+}
+
+void initializeTransition(transition* trans){
+	trans->size = 0;
+	trans->states = NULL;
 }
 
 void novoElem(array* elemArray, const char* palavra){
@@ -36,7 +48,18 @@ void freeArray(array* elemArray){
 			if(elemArray->data[i] != NULL)
 				free(elemArray->data[i]);
 		}
+		free(elemArray->data);
 	}
+}
+
+void freeTransitionTable(transition** table, size_t numStates, size_t numSymbols){
+	for(size_t i=0; i<numStates; i++){
+		for(size_t j=0; j<numSymbols; j++){
+			free(table[i][j].states);
+		}
+		free(table[i]);
+	}
+	free(table);
 }
 
 void processArray(char word[MAX_PALAVRA]){ // Remove os espaços da string
@@ -73,27 +96,57 @@ void wordToArraySearched(char word[MAX_PALAVRA], array* src, array* dest){
 }
 
 int searchArray(array *bDados, const char entrada[MAX_PALAVRA]){
-	int encontrou;
 	size_t j=0, i=0;
-	while((encontrou!=1)&&(bDados->size>i)){
-		encontrou = 0;
-		if(strlen(bDados->data[i]) != strlen(entrada))
-			encontrou = -1;
-		while((encontrou!=-1)&&(bDados->data[i][j] != '\0')){
-			if(bDados->data[i][j] == entrada[j]){
-				encontrou = 1;
-			}
-			else{
-				encontrou = -1;
-			}
-			j++;
-		}
-		j=0, i++;
+	while(bDados->size>i){
+		if(strcmp(bDados->data[i], entrada)==0)
+			return i;
+		i++;
 	}	
-	if(encontrou==1){
-		return i;
-	}
 	return -1;
+}
+
+void addTransition(transition* trans, int stateIndex){
+	if(trans->size==0){
+		trans->states = malloc(sizeof(int));
+	}
+	else{
+		trans->states = realloc(trans->states, (trans->size + 1) * sizeof(int));
+	}
+	trans->states[trans->size] = stateIndex;
+	trans->size++;
+}
+
+void createTransitionTable(transition** transitionTable, array* estados, array* alfabeto){
+	char entrada[MAX_PALAVRA], *token;
+	int estadoAtual;
+	short unsigned check=0;
+	for(size_t i = 0 ;i<estados->size; i++){
+		for(size_t j = 0; j<alfabeto->size; j++){
+			while(getchar()!='\n');
+
+			printf("Transição do estado %s com o simbolo %s\n", estados->data[i], alfabeto->data[j]);
+			printf("OBS: Separe mais de um estado por virgula, ou um estado fora do alfabeto para transição Vazia\n");
+			scanf("%s", entrada);
+			processArray(entrada);
+
+			token = strtok(entrada, ",");
+			check=0;
+			while(token != NULL){
+				estadoAtual = searchArray(estados, token);
+				if(estadoAtual != -1){
+					addTransition(&transitionTable[i][j], estadoAtual); 
+					check=1;
+				}
+				else{
+					printf("Estado %s invalido, ignorando\n", token);
+				}
+				token = strtok(NULL, ",");
+			}
+			if(check==0){
+				addTransition(&transitionTable[i][j], -1);
+			}
+		}
+	}
 }
 
 
@@ -106,6 +159,7 @@ int main(){
 	size_t esc=0, clock, check=0;
 	short unsigned epsilon;
 	char entrada[MAX_PALAVRA], estadoInicial[MAX_PALAVRA];
+	transition** transitionTable;
 
 	do{
 		switch(esc){
@@ -153,26 +207,36 @@ int main(){
 				printf("Deseja adicionar um epsilon ao automato [1] sim, [0] não\n");
 				while(getchar()!='\n');
 				scanf("%lu", &esc);
-				while(esc!=1){
+				while(esc==1){
 					while(getchar()!='\n');
 					printf("Insira um simbolo que não está no alfabto: ");
 					scanf("%s",entrada);
-					if(searchArray(&alfabeto, entrada)==-1){
-						esc=0;
+					if(searchArray(&alfabeto, entrada)!=-1){
+						esc=1;
 					}
 					else{
 						esc=0;
 						novoElem(&alfabeto, entrada);
+						epsilon = 1;
 					}
 				}		
 
+				transitionTable = (transition**)malloc(estados.size*sizeof(transition*));
+				for(size_t i=0; i<estados.size;i++){
+					transitionTable[i] = (transition*)malloc(alfabeto.size * sizeof(transition));
+					for(size_t j = 0; j<alfabeto.size; j++){
+						initializeTransition(&transitionTable[i][j]);
+					}
+				}
+				createTransitionTable(transitionTable, &estados, &alfabeto);
+				
 
 		}
 		printf("[1] Criar AFN\n");
 		scanf("%lu", &esc);
 	}while(esc!=0);
 	
-
+	freeTransitionTable(transitionTable, estados.size, alfabeto.size);
 	freeArray(&alfabeto);
 	freeArray(&estados);
 	freeArray(&estadosFinais);
