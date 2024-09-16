@@ -16,6 +16,13 @@ typedef struct transition{
 	size_t size;
 } transition;
 
+typedef struct AF{
+	array estados, alfabeto, estadosFinais;
+	transition **transitionTable;
+	char estadoInicial[MAX_PALAVRA];
+	short unsigned epsilon;
+}automata;
+
 void initialize(array* elemArray){
 	elemArray->size = 0;
 	elemArray->data = NULL;
@@ -149,17 +156,71 @@ void createTransitionTable(transition** transitionTable, array* estados, array* 
 	}
 }
 
+void initializeAF(automata* newAutomata){
+	initialize(&newAutomata->alfabeto);
+	initialize(&newAutomata->estadosFinais);
+	initialize(&newAutomata->estados);
+	newAutomata->epsilon = 0;
+}
+
+void freeAF(automata* newAutomata){
+	freeTransitionTable(newAutomata->transitionTable, newAutomata->estados.size, newAutomata->alfabeto.size);
+	freeArray(&newAutomata->alfabeto);
+	freeArray(&newAutomata->estadosFinais);
+	freeArray(&newAutomata->estados);
+}
+
+void cleanAutomata(automata* newAutomata){
+	freeAF(newAutomata);
+	initializeAF(newAutomata);
+}
+
+void displayArray(array *element){
+	printf("{");
+	for(size_t i = 0; i<element->size; i++){
+		if(i<element->size-1)
+			printf("%s,",element->data[i]);
+		else
+			printf("%s}\n", element->data[i]);
+	}
+}
+
+void displayAutomata(automata newAutomata){
+	array *estado = &newAutomata.estados, *alfabeto = &newAutomata.alfabeto, *estadosFinais = &newAutomata.estadosFinais;
+	
+	printf("Estados: ");
+	displayArray(estado);
+	
+	printf("Alfabeto: ");
+	displayArray(alfabeto);
+	
+	printf("Estados Finais: ");
+	displayArray(estadosFinais);
+	
+	printf("Estado inicial: %s\n", newAutomata.estadoInicial);
+
+	for(size_t i = 0; i<estado->size; i++){
+		for(size_t j = 0; j<alfabeto->size; j++){
+			printf("Transição do estado %s com o simbolo %s: ", estado->data[i], alfabeto->data[j]);
+			for(size_t k = 0; k<newAutomata.transitionTable[i][j].size; k++){
+				if(newAutomata.transitionTable[i][j].states[k]==-1)
+					printf("Vazio");
+				else
+					printf("%s", estado->data[newAutomata.transitionTable[i][j].states[k]]);
+			}
+			printf("\n");
+		}
+	}
+
+}
 
 int main(){
-	array estados, alfabeto, estadosFinais;
-	initialize(&alfabeto);
-	initialize(&estadosFinais);
-	initialize(&estados);
+	automata newAutomata;
 
 	size_t esc=0, clock, check=0;
-	short unsigned epsilon;
-	char entrada[MAX_PALAVRA], estadoInicial[MAX_PALAVRA];
-	transition** transitionTable;
+	char entrada[MAX_PALAVRA];
+
+	initializeAF(&newAutomata);
 
 	do{
 		switch(esc){
@@ -171,7 +232,7 @@ int main(){
 				scanf("%s", entrada);
 				
 				processArray(entrada);
-				wordToArray(entrada, &estados);
+				wordToArray(entrada, &newAutomata.estados);
 
 				printf("Inserir alfabeto\n");
 				printf("Digite somente um simbolo separado por virgula: ");
@@ -180,22 +241,22 @@ int main(){
 				scanf("%s", entrada);
 				
 				processArray(entrada);
-				wordToArray(entrada, &alfabeto);
+				wordToArray(entrada, &newAutomata.alfabeto);
 
 				printf("Digite os Estados Finais, separados, por virgula: ");
 				while(getchar()!='\n');
 				scanf("%s", entrada);
 
 				processArray(entrada);
-				wordToArraySearched(entrada, &estadosFinais, &estados);
+				wordToArraySearched(entrada, &newAutomata.estadosFinais, &newAutomata.estados);
 
 				printf("Digite o estado inicial: ");
 				while(getchar()!='\n');
 				while(check!=1){
 					scanf("%s", entrada);
-					if(searchArray(&estados, entrada)!=-1){
+					if(searchArray(&newAutomata.estados, entrada)!=-1){
 						check=1;
-						strcpy(estadoInicial, entrada);
+						strcpy(newAutomata.estadoInicial, entrada);
 					}
 					else{
 						printf("Estado não encontrado, Digite novamente: ");
@@ -211,34 +272,38 @@ int main(){
 					while(getchar()!='\n');
 					printf("Insira um simbolo que não está no alfabeto: ");
 					scanf("%s",entrada);
-					if(searchArray(&alfabeto, entrada)!=-1){
+					if(searchArray(&newAutomata.alfabeto, entrada)!=-1){
 						esc=1;
 					}
 					else{
 						esc=0;
-						novoElem(&alfabeto, entrada);
-						epsilon = 1;
+						novoElem(&newAutomata.alfabeto, entrada);
+						newAutomata.epsilon = 1;
 					}
 				}		
 
-				transitionTable = (transition**)malloc(estados.size*sizeof(transition*));
-				for(size_t i=0; i<estados.size;i++){
-					transitionTable[i] = (transition*)malloc(alfabeto.size * sizeof(transition));
-					for(size_t j = 0; j<alfabeto.size; j++){
-						initializeTransition(&transitionTable[i][j]);
+				newAutomata.transitionTable = (transition**)malloc(newAutomata.estados.size*sizeof(transition*));
+				for(size_t i=0; i<newAutomata.estados.size;i++){
+					newAutomata.transitionTable[i] = (transition*)malloc(newAutomata.alfabeto.size * sizeof(transition));
+					for(size_t j = 0; j<newAutomata.alfabeto.size; j++){
+						initializeTransition(&newAutomata.transitionTable[i][j]);
 					}
 				}
-				createTransitionTable(transitionTable, &estados, &alfabeto);
-				
+				createTransitionTable(newAutomata.transitionTable, &newAutomata.estados, &newAutomata.alfabeto);
+				break;
+			case 2:
+				displayAutomata(newAutomata);
+				break;
+			case 3:
+				cleanAutomata(&newAutomata);
+				break;
+
 
 		}
 		printf("[1] Criar AFN\n");
+		printf("[2] Mostrar Automato\n");
+		printf("[3] Limpar automata\n");
+		printf("[0] Sair\n");
 		scanf("%lu", &esc);
 	}while(esc!=0);
-	
-	freeTransitionTable(transitionTable, estados.size, alfabeto.size);
-	freeArray(&alfabeto);
-	freeArray(&estados);
-	freeArray(&estadosFinais);
-
 }
