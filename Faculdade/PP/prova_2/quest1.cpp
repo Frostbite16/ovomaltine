@@ -49,6 +49,14 @@ class ordenedVec:public vector<T>{
 			}
 		}
 
+		void removeValue(T data){
+			typename vector<T>::iterator it;
+			for(it=this->begin(); (it!=this->end())&&(*it!=data); ++it);
+			if(*it==data){
+				this->erase(it);
+			}	
+		}
+
 		void insertMiddle(T data){
 			typename vector<T>::iterator it;
 			float middle;
@@ -72,8 +80,7 @@ int main(){
 	ov.inserir(105);
 	ov.inserir(-15);
 	ov.inserir(100);
-	ov.insertMiddle(1000);
-
+	ov.removeValue(75);
 	return 1;
 }
 
