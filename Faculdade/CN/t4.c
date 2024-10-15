@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 
-#define STEP 0.5f;
+#define STEP 1
 
 
 void initializeArray(double** constantList, size_t n){
@@ -11,40 +11,42 @@ void initializeArray(double** constantList, size_t n){
 } 
 
 double polinomialFunction(size_t n, double x, double* constantList){
-	double resultOverTime;
+	double resultOverTime=0;
 	for(size_t i=0; i<=n; ++i){
 		resultOverTime += constantList[i] * pow(x,i);
 	}
 	return resultOverTime;	
 }
 
-void optInterval(double a, double b, size_t n, double* constantList){
+void optInterval(double *a, double *b, size_t n, double* constantList){
 	short unsigned flag=1;
 	float aValue, bValue;
 
-	bValue = polinomialFunction(n, b, constantList);
+	bValue = polinomialFunction(n, *b, constantList);
 
 	while(flag){
-		aValue = polinomialFunction(n, a+STEP, constantList);
+		aValue = polinomialFunction(n, *a+STEP, constantList);
 		if(aValue*bValue<0){
-			a+=STEP;
+			*a+=STEP;
+			printf("a:%lf aValue:%lf\n", *a, aValue);
 		}
 		else{
 			flag=0;
 		}
 	}	
 	
-	aValue = polinomialFunction(n, a, constantList);
+	aValue = polinomialFunction(n, *a, constantList);
 	flag = 1;
 
-	while(flag){
+	while(flag){	
+		bValue = polinomialFunction(n, *b-STEP, constantList);
 		if(aValue*bValue<0){
-			b-=STEP;
+			*b-=STEP;
+			printf("b:%lf bValue:%lf\n", *b, bValue);
 		}
 		else{
 			flag=0;
 		}
-		bValue = polinomialFunction(n, b+STEP, constantList); 
 	}
 
 }
@@ -67,16 +69,18 @@ int main(){
 	
 
 	do{
-		
 		printf("Intervalo [a;b]: ");
 		scanf("%lf %lf",&a,&b);
 		
 		aValue = polinomialFunction(ordem, a, constantList);
 		bValue = polinomialFunction(ordem, b, constantList);
+		
+		if(aValue*bValue>0)
+			printf("não é possivel achar o intervalo com esses valores\n");
 
 	}while((aValue*bValue)>0);
 	
-
+	optInterval(&a, &b, ordem, constantList);
 	printf("Intervalo [ %lf ; %lf] \n", a,b);
 
 
