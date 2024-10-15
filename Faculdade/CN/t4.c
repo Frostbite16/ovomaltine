@@ -18,38 +18,64 @@ double polinomialFunction(size_t n, double x, double* constantList){
 	return resultOverTime;	
 }
 
+void findZero(double a, double b, size_t n, double* constantList){
+	short unsigned flag;
+	double bValue, aValue, bAux, firstB;
+	bAux = b;
+	firstB = b;
+
+	bValue = polinomialFunction(n, b, constantList);
+	aValue = polinomialFunction(n, a, constantList);
+	do{
+		while((aValue*bValue<0)){
+			aValue = polinomialFunction(n, a+STEP, constantList);
+			if(aValue*bValue<0){
+				a += STEP;			
+			}			
+		}
+	
+		flag = 0;
+
+		aValue = polinomialFunction(n, a, constantList);
+		while(a<bAux){
+			bValue = polinomialFunction(n, bAux-STEP, constantList);
+			bAux-=STEP;
+			if(bValue*aValue<0){
+				b = bAux;
+				flag=1;
+			}
+		}
+		
+		bValue = polinomialFunction(n, b, constantList);
+		
+		while((aValue*bValue<0)){
+			aValue = polinomialFunction(n, a+STEP, constantList);
+			if(aValue*bValue<0){
+				a += STEP;			
+			}			
+		}
+		aValue = polinomialFunction(n, a, constantList);
+
+		if(aValue*bValue<0){
+			printf("Raiz no intervalo [%lf,%lf]\n",a,b); 
+		}
+
+		a = b;
+		b = firstB;
+
+	}while(flag);
+}
+
 void optInterval(double *a, double *b, size_t n, double* constantList){
 	short unsigned flag=1;
-	float aValue, bValue;
+	double aValue, bValue;
 
 	bValue = polinomialFunction(n, *b, constantList);
 
-	while(flag){
-		aValue = polinomialFunction(n, *a+STEP, constantList);
-		if(aValue*bValue<0){
-			*a+=STEP;
-			printf("a:%lf aValue:%lf\n", *a, aValue);
-		}
-		else{
-			flag=0;
-		}
-	}	
-	
-	aValue = polinomialFunction(n, *a, constantList);
-	flag = 1;
-
-	while(flag){	
-		bValue = polinomialFunction(n, *b-STEP, constantList);
-		if(aValue*bValue<0){
-			*b-=STEP;
-			printf("b:%lf bValue:%lf\n", *b, bValue);
-		}
-		else{
-			flag=0;
-		}
-	}
 
 }
+
+
 
 int main(){
 	double *constantList, a, b, aValue, bValue;
@@ -68,19 +94,13 @@ int main(){
 	}
 	
 
-	do{
-		printf("Intervalo [a;b]: ");
-		scanf("%lf %lf",&a,&b);
+	printf("Intervalo [a;b]: ");
+	scanf("%lf %lf",&a,&b);
 		
-		aValue = polinomialFunction(ordem, a, constantList);
-		bValue = polinomialFunction(ordem, b, constantList);
-		
-		if(aValue*bValue>0)
-			printf("não é possivel achar o intervalo com esses valores\n");
-
-	}while((aValue*bValue)>0);
+	aValue = polinomialFunction(ordem, a, constantList);
+	bValue = polinomialFunction(ordem, b, constantList);	
 	
-	optInterval(&a, &b, ordem, constantList);
+	findZero(a, b, ordem, constantList);
 	printf("Intervalo [ %lf ; %lf] \n", a,b);
 
 
