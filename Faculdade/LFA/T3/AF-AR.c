@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <stdbool.h>
 
 #define MAX_PALAVRA 20
 #define NO_TRANSICAO -1
@@ -150,7 +151,7 @@ void createTransitionTable(transition** transitionTable, array* estados, array* 
 				token = strtok(NULL, ",");
 			}
 			if(check==0){
-				addTransition(&transitionTable[i][j], -1);
+				addTransition(&transitionTable[i][j], NO_TRANSICAO);
 			}
 		}
 	}
@@ -203,7 +204,7 @@ void displayAutomata(automata newAutomata){
 		for(size_t j = 0; j<alfabeto->size; j++){
 			printf("Transição do estado %s com o simbolo %s: ", estado->data[i], alfabeto->data[j]);
 			for(size_t k = 0; k<newAutomata.transitionTable[i][j].size; k++){
-				if(newAutomata.transitionTable[i][j].states[k]==-1)
+				if(newAutomata.transitionTable[i][j].states[k]==NO_TRANSICAO)
 					printf("Vazio");
 				else
 					printf("%s", estado->data[newAutomata.transitionTable[i][j].states[k]]);
@@ -211,7 +212,135 @@ void displayAutomata(automata newAutomata){
 			printf("\n");
 		}
 	}
+}
 
+short unsigned isitDFA(automata newAutomata){
+	if(!newAutomata.epsilon){
+		for(size_t i = 0; i < newAutomata.estados.size; i++){
+			for(size_t j = 0; j < newAutomata.alfabeto.size; j++){
+				if(newAutomata.transitionTable[i][j].size>1){
+					return 0;
+				}
+			}
+		}
+		return 1;
+	}
+	return 0; 
+}
+
+// Function to calculate epsilon closure of a set of NFA states
+void epsilonClosure(automata* nfa, bool* closure, int state) {
+    if (closure[state]) return; // Already included in closure
+
+    closure[state] = true;
+
+    // Check epsilon transitions (assuming epsilon is represented by the last symbol in the alphabet)
+    int epsilonIndex = nfa->alfabeto.size - 1; // Last symbol is epsilon if epsilon is present
+    if (nfa->epsilon && epsilonIndex >= 0) {
+        for (size_t i = 0; i < nfa->transitionTable[state][epsilonIndex].size; i++) {
+            int nextState = nfa->transitionTable[state][epsilonIndex].states[i];
+            if (nextState != NO_TRANSICAO) {
+                epsilonClosure(nfa, closure, nextState);
+            }
+        }
+    }
+}
+
+bool areSetsEqual(bool* set1, bool* set2, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        if (set1[i] != set2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void convertToDFA(automata* nfa, automata* dfa) {
+    array* nfaStates = &nfa->estados;
+    array* nfaAlphabet = &nfa->alfabeto;
+    array* nfaFinalStates = &nfa->estadosFinais;
+
+    // DFA initialization
+    initialize(&dfa->estados);
+    initialize(&dfa->alfabeto);
+    initialize(&dfa->estadosFinais);
+    dfa->epsilon = 0;
+
+    // Copy alphabet (excluding epsilon, if present)
+    for (size_t i = 0; i < (nfa->epsilon ? nfaAlphabet->size - 1 : nfaAlphabet->size); i++) {
+        novoElem(&dfa->alfabeto, nfaAlphabet->data[i]);
+    }
+
+    // Create the first DFA state as the epsilon closure of the NFA's initial state
+    bool** dfaStates = malloc(sizeof(bool*) * 100);  // For simplicity, assume max 100 DFA states
+    int dfaStateCount = 0;
+
+    // Initialize epsilon closure for initial state
+    bool* initialClosure = calloc(nfaStates->size, sizeof(bool));
+    int initialStateIndex = searchArray(nfaStates, nfa->estadoInicial);
+    epsilonClosure(nfa, initialClosure, initialStateIndex);
+
+    // Add this closure as the first DFA state
+    dfaStates[dfaStateCount++] = initialClosure;
+
+    // DFA creation loop
+    for (int i = 0; i < dfaStateCount; i++) {
+        bool* currentDFAState = dfaStates[i];
+
+        // Loop through alphabet symbols (excluding epsilon)
+        for (size_t j = 0; j < dfa->alfabeto.size; j++) {
+            bool* newState = calloc(nfaStates->size, sizeof(bool));
+
+            // Find transitions for all NFA states in the current DFA state
+            for (size_t k = 0; k < nfaStates->size; k++) {
+                if (currentDFAState[k]) {
+                    for (size_t l = 0; l < nfa->transitionTable[k][j].size; l++) {
+                        int nfaNextState = nfa->transitionTable[k][j].states[l];
+                        if (nfaNextState != NO_TRANSICAO) {
+                            epsilonClosure(nfa, newState, nfaNextState);
+                        }
+                    }
+                }
+            }
+
+            // Check if the new state already exists in the DFA
+            bool stateExists = false;
+            for (int s = 0; s < dfaStateCount; s++) {
+                if (areSetsEqual(dfaStates[s], newState, nfaStates->size)) {
+                    stateExists = true;
+                    break;
+                }
+            }
+
+            // If the state is new, add it to the DFA
+            if (!stateExists) {
+                dfaStates[dfaStateCount++] = newState;
+            } else {
+                free(newState);
+            }
+        }
+    }
+
+    // Mark final states in DFA
+    for (int i = 0; i < dfaStateCount; i++) {
+        bool* dfaState = dfaStates[i];
+        for (size_t j = 0; j < nfaFinalStates->size; j++) {
+            int nfaFinalStateIndex = searchArray(nfaStates, nfaFinalStates->data[j]);
+            if (dfaState[nfaFinalStateIndex]) {
+                // This DFA state is final
+                char dfaStateName[MAX_PALAVRA];
+                sprintf(dfaStateName, "DFA State %d", i);
+                novoElem(&dfa->estadosFinais, dfaStateName);
+                break;
+            }
+        }
+    }
+
+    // Free dynamically allocated memory for DFA state tracking
+    for (int i = 0; i < dfaStateCount; i++) {
+        free(dfaStates[i]);
+    }
+    free(dfaStates);
 }
 
 int main(){
@@ -224,6 +353,8 @@ int main(){
 
 	do{
 		switch(esc){
+			case 0:
+				break;
 			case 1:
 				printf("Inserir estados, Não é permitido o simbolo '-'\n");
 				printf("Digite somente um simbolo separado por virgula: ");
@@ -295,14 +426,24 @@ int main(){
 				displayAutomata(newAutomata);
 				break;
 			case 3:
-				cleanAutomata(&newAutomata);
+				cleanAutomata(&newAutomata);	
+			case 4:
+				if(isitDFA(newAutomata)){
+					printf("O automato já é um AFD\n");
+				}
+				else{
+					automata dfa;
+					convertToDFA(&newAutomata, &dfa);
+					displayAutomata(dfa);
+					freeAF(&dfa);
+				}
 				break;
-
 
 		}
 		printf("[1] Criar AFN\n");
 		printf("[2] Mostrar Automato\n");
 		printf("[3] Limpar automata\n");
+		printf("[4] Converter Automata para DFA\n");
 		printf("[0] Sair\n");
 		scanf("%lu", &esc);
 	}while(esc!=0);

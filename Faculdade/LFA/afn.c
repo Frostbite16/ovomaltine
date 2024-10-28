@@ -142,8 +142,8 @@ int main(){
 				while(getchar()!='\n');
 				scanf("%lu", &epsilon);
 				while(esc!=1){
-					printf("Insira um simbolo que não está no alfabeto");
 					while(getchar()!='\n');
+					printf("Insira um simbolo que não está no alfabeto: ");
 					scanf("%c",&data);
 					if(searchArray(&alfabeto, data)!=NUM_STATES+NUM_ALPHABET+1){
 						esc=1;

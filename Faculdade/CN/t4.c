@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 
-#define STEP 1
+#define STEP 0.0001
 
 
 void initializeArray(double** constantList, size_t n){
@@ -20,13 +20,16 @@ double polinomialFunction(size_t n, double x, double* constantList){
 
 void findZero(double a, double b, size_t n, double* constantList){
 	short unsigned flag;
-	double bValue, aValue, bAux, firstB;
+	double bValue, aValue, bAux, firstB, firstBValue;
 	bAux = b;
 	firstB = b;
 
 	bValue = polinomialFunction(n, b, constantList);
 	aValue = polinomialFunction(n, a, constantList);
+
+	firstBValue = bValue;
 	do{
+		bValue = firstBValue;
 		while((aValue*bValue<0)){
 			aValue = polinomialFunction(n, a+STEP, constantList);
 			if(aValue*bValue<0){
@@ -57,7 +60,7 @@ void findZero(double a, double b, size_t n, double* constantList){
 		aValue = polinomialFunction(n, a, constantList);
 
 		if(aValue*bValue<0){
-			printf("Raiz no intervalo [%lf,%lf]\n",a,b); 
+			printf("Raiz no intervalo [%.7lf,%.7lf]\n Valores de F(a): %lf, F(b): %lf\n",a,b,aValue,bValue); 
 		}
 
 		a = b;
@@ -80,6 +83,7 @@ void optInterval(double *a, double *b, size_t n, double* constantList){
 int main(){
 	double *constantList, a, b, aValue, bValue;
 	size_t ordem;
+	clock_t end,begin;
 
 	printf("Qual a ordem da função: ");
 	scanf("%ld", &ordem);
@@ -96,13 +100,15 @@ int main(){
 
 	printf("Intervalo [a;b]: ");
 	scanf("%lf %lf",&a,&b);
-		
-	aValue = polinomialFunction(ordem, a, constantList);
-	bValue = polinomialFunction(ordem, b, constantList);	
 	
-	findZero(a, b, ordem, constantList);
-	printf("Intervalo [ %lf ; %lf] \n", a,b);
 
+    begin = clock();
+
+	findZero(a, b, ordem, constantList);
+
+	end = clock();
+
+	printf("Tempo: %lf",(double)(end-begin)/(CLOCKS_PER_SEC));
 
 
 	free(constantList);
