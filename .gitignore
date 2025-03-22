@@ -31,7 +31,4 @@ c++/Testes.cpp
 #ignore ssh keys
 *.pub
 
-#ignore binary files
-*.a
-*.d
-*.c
+
