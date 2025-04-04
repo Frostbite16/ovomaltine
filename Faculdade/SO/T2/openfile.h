@@ -4,10 +4,6 @@
 
 #define INT_STANDARD_SIZE int32_t
 
-
-
-
-
 void openFileAndStore(const char* fileName, int* arraySize, int** numArray){ // Open file with "Filename" name and store it in "NumArray" with the number of integers in file store in arraysize
 	struct stat fileStat;
 	FILE* binfile;
@@ -27,7 +23,6 @@ void openFileAndStore(const char* fileName, int* arraySize, int** numArray){ // 
 		}
 
 		fread(*numArray, sizeof(INT_STANDARD_SIZE), *arraySize, binfile); // Read the whole content of "filename" and stores it in numArrat
-
 		fclose(binfile);
 
 	}
