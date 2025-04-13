@@ -7,11 +7,11 @@
 void openFileAndStore(const char* fileName, int* arraySize, int** numArray){ // Open file with "Filename" name and store it in "NumArray" with the number of integers in file store in arraysize
 	struct stat fileStat;
 	FILE* binfile;
-	int file_dcp;
 
 	binfile = fopen(fileName, "rb"); // Open file in Read binary mode
-	if(binfile){ // Check if the program succeded in opening the file
-		file_dcp = fileno(binfile); // Get the descriptor of the file with the file pointer binfile	
+
+	if(binfile){ // Check if the program succeeded in opening the file
+		int file_dcp = fileno(binfile); // Get the descriptor of the file with the file pointer binfile
 
 		fstat(file_dcp, &fileStat); // Obtain the stats of the file
 		*numArray = (int*)malloc(fileStat.st_size); // Allocate the necessary size in numArray
@@ -22,7 +22,7 @@ void openFileAndStore(const char* fileName, int* arraySize, int** numArray){ // 
 			exit(EXIT_FAILURE);
 		}
 
-		fread(*numArray, sizeof(INT_STANDARD_SIZE), *arraySize, binfile); // Read the whole content of "filename" and stores it in numArrat
+		fread(*numArray, sizeof(INT_STANDARD_SIZE), *arraySize, binfile); // Read the whole content of "filename" and stores it in numArray
 		fclose(binfile);
 
 	}
