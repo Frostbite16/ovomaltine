@@ -295,7 +295,6 @@ int commandReader(char* command, char* curPath) {
         if (value_check == -1) {
             printf("Erro na execucao do programa\n");
         }
-		return 1;
     }
 
     // Se não for background, espera processo filho terminar
