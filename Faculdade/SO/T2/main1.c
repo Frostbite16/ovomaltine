@@ -2,6 +2,9 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <limits.h>
+
+#define THREADS_MAX 100000
 
 #define INT_STANDARD_SIZE int32_t  // define o tipo padrão de inteiro
 
@@ -44,13 +47,13 @@ void openFileAndStore(const char* fileName, int* arraySize, int** numArray){
 void* sumPortion(void* args){
     int* startPos = ((ThreadArgs*)args)->startPos;  // início
     int* endPos = ((ThreadArgs*)args)->endPos;      // fim
-    int *partialSum = &((ThreadArgs*)args)->partialSum;  // soma parcial
+    int* partialSum = &((ThreadArgs*)args)->partialSum;  // soma parcial
 
     *partialSum = 0;    
     for(int* iterator=startPos; iterator!=endPos; iterator++){  // itera até o fim
         *partialSum += *iterator;  // acumula valor
     }
-    return NULL;  // retorna sem valor
+    return NULL; 
 }
 
 // cria threads e divide o trabalho
@@ -58,11 +61,6 @@ void assignThread(unsigned threadsQuant, int arraySize, int *totalSum, int** num
     size_t arrayPortion, remainder;
     pthread_t* threads;
     ThreadArgs* args;
-
-    if(threadsQuant>= (unsigned)arraySize) {  // não ter mais threads que elementos
-        threadsQuant = arraySize;
-        arrayPortion = 1;
-    }
 
     threads = malloc(sizeof(pthread_t)*threadsQuant);  // aloca vetor de threads
     args = calloc(threadsQuant,sizeof(ThreadArgs));    // aloca argumentos
@@ -78,8 +76,9 @@ void assignThread(unsigned threadsQuant, int arraySize, int *totalSum, int** num
         args[count].startPos = &(*numberArray)[startPos];  // define início
         args[count].endPos = &(*numberArray)[endPos];      // define fim
 
-        pthread_create(&threads[count], NULL, sumPortion, &args[count]);  // cria thread
-    }
+		pthread_create(&threads[count], NULL, sumPortion, &args[count]);  // cria thread
+
+	}
 
     for(size_t i=0; i<threadsQuant; i++){
         pthread_join(threads[i], NULL);  // aguarda término
@@ -104,7 +103,7 @@ int main(int argc, char* argv[]){
     fileName = argv[1];  // nome do arquivo
     threadsQuant = atoi(argv[2]);  // converte pra inteiro
 
-    if(threadsQuant-1<=0){  // threads deve ser >= 1
+    if(threadsQuant-1<=0 || threadsQuant > THREADS_MAX){  // threads deve ser >= 1
         fprintf(stderr, "Quantidade de threads invalida\n");
         exit(EXIT_FAILURE);
     }

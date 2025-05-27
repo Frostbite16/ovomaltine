@@ -7,7 +7,6 @@
 #include <unistd.h>
 
 #define INT_STANDARD_SIZE sizeof(int32_t)  // tamanho de um inteiro em bytes
-#define KEY 1337  // chave para memória compartilhada
 
 typedef struct{
     int* startPos;   // ponteiro para início da fatia do array
@@ -74,7 +73,8 @@ void assignProcess(unsigned processQuant, int arraySize, int* totalSum, int** nu
     ProcessArgs* args = malloc(sizeof(ProcessArgs) * processQuant);  // args de cada processo
 
     for (size_t count = 0; count < processQuant; count++) {
-        if (fork() == 0) {  // processo filho
+        int procID = fork();
+		if (procID == 0) {  // processo filho
             size_t startPos = count * arrayPortion + (count < remainder ? count : remainder);  // início
             size_t elements = arrayPortion + (count < remainder ? 1 : 0);  // quantidade
             size_t endPos = startPos + elements;  // fim
@@ -82,9 +82,14 @@ void assignProcess(unsigned processQuant, int arraySize, int* totalSum, int** nu
             args[count].endPos = &(*numberArray)[endPos];      // define fim
             args[count].position = &shm[count];                // posição na SHM
             sumRoutine(&args[count]);  // executa soma
-            shmdt(shm);               // desanexa SHM
+            shmdt(shm);     // desanexa SHM
+			free(args);			
             exit(EXIT_SUCCESS);       // termina filho
         }
+		if(procID == -1){
+			wait(NULL);
+			count--;
+		}
     }
 
     // espera todos os filhos
