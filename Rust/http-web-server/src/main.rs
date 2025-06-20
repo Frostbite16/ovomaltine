@@ -38,6 +38,8 @@ fn http_handling(mut stream: TcpStream){
         let response = format!("{status_line}\r\nContents.length: {len}\r\n\r\n{contents}");
 
         stream.write_all(response.as_bytes()).unwrap();
+
+        io::println("AAA");
     }
 
     

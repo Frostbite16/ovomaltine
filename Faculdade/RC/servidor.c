@@ -2,8 +2,10 @@
 #include<string.h>
 #include<stdlib.h>
 #include<unistd.h>
-#include<sys/socket.h>
+// #include<sys/socket.h>
 #include<netinet/in.h>
+#include<arpa/inet.h>
+
 
 #define PORTA 8080
 
@@ -26,6 +28,7 @@ int main(int argc, char* argv[]){
 		perror("Problema no setsockopt");
 		exit(EXIT_FAILURE);
 	}
+
 
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
