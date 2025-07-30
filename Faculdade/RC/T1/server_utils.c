@@ -76,6 +76,7 @@ void receive_message(char *packed_buffer, size_t buffer_size, struct sockaddr_in
 	pthread_rwlock_unlock(&message_lock);
 
 	if(process_message(packed_buffer, buffer_size) == -1){
+		printf("[ERRO] Dados corrompidos, enviando solicitação de novos dados ao cliente\n");
 		sendto(client_socket, &rdt_response, sizeof(rdt_response), 0, (struct sockaddr *)&client_info, addrlen);
 		return;
 	}
@@ -92,7 +93,6 @@ void receive_message(char *packed_buffer, size_t buffer_size, struct sockaddr_in
 
 	char* message_point = packed_buffer + sizeof(uint16_t); // Pula checksum
 	unpack_message(message_point, buffer_size, &new_message_st);
-
 
 	if(new_message_st.message_type == 'D') {
 		char return_message[1024];
@@ -123,6 +123,7 @@ void receive_message(char *packed_buffer, size_t buffer_size, struct sockaddr_in
 
 short process_message(char *packed_buffer, size_t buffer_size){
 	char* point_to_buf = packed_buffer;
+	
 	read_and_convert16(&point_to_buf);
 
 	if(buffer_size < sizeof(uint16_t)) return -1;
@@ -131,8 +132,8 @@ short process_message(char *packed_buffer, size_t buffer_size){
 	message_size = ntohl(message_size);
 
 	point_to_buf -= sizeof(uint16_t);
-
-	uint16_t recalc_checksum = get_checksum(point_to_buf, message_size);
+	
+	uint16_t recalc_checksum = get_checksum(point_to_buf, message_size + sizeof(uint16_t));
 	
 	if(!recalc_checksum) return 0;
 	return -1;	

@@ -26,7 +26,6 @@ struct l_node* get_lowest_price(uint8_t fuel_type, struct l_node* root){
 		}
 		current_node = current_node->next;
 	}
-	printf("%f\n", lowest_node->data.st_data.latitude);
 	return lowest_node;
 }
 
