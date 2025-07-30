@@ -69,8 +69,27 @@ short search_rec(struct k_node* root, struct gs_data_protocol_t* data, unsigned 
 	return search_rec(root->right, data, depth + 1);
 }
 
+struct k_node* search_rec_node(struct k_node* root, struct gs_data_protocol_t* data, unsigned depth){
+	if(root==NULL) return 0;
+	if(are_points_the_same(&root->st_data, data)) return root;
+
+	unsigned cd = depth % 2;
+	float coord_root = (cd == 0 ? root->st_data.latitude : root->st_data.longitude);
+	float coord_new = (cd == 0 ? data->latitude : data->longitude);
+
+	if(coord_new < coord_root)
+		return search_rec_node(root->left, data, depth+1);
+
+
+	return search_rec_node(root->right, data, depth + 1);
+}
+
 short search(struct k_node* root, struct gs_data_protocol_t* data){
 	return search_rec(root, data, 0);
+}
+
+struct k_node* search_node(struct k_node* root, struct gs_data_protocol_t* data){
+	return search_rec_node(root, data, 0);
 }
 
 void free_tree(struct k_node** root){

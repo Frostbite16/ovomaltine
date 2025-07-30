@@ -1,6 +1,5 @@
 #include <netinet/in.h>
 #include <stdint.h>
-#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,50 +16,6 @@
 #define MIN_SHIFT		17
 #define SEC_INT_SHIFT	11
 
-
-uint32_t pack_coordinates(int32_t degrees, uint32_t minutes, float seconds){ // !!Não uso mais essa função
-	uint32_t packed_data = 0;
-
-	if (degrees < 0){
-		packed_data = packed_data | 1<<31;
-	}
-
-	packed_data = packed_data | ((uint32_t)abs(degrees) & DEG_MASK) << DEG_SHIFT;
-	packed_data = packed_data | (minutes & MIN_MASK) << MIN_SHIFT;
-
-	double sec_int_part;
-	double sec_frac_part = modf(seconds, &sec_int_part);
-
-	packed_data = packed_data | ((uint32_t) sec_int_part & SEC_INT_MASK) << SEC_INT_SHIFT;
-
-	uint32_t scaled_frac = (uint32_t)round(sec_frac_part * (SEC_FRAC_MASK + 1));
-
-	packed_data = packed_data | (scaled_frac & SEC_FRAC_MASK);
-
-	return packed_data;
-
-}
-
-char get_message_type(){
-	printf("Tipo da mensagem: ");
-	const char c = getchar();
-	while(getchar() != '\n');
-	return c;
-}
-
-float get_coordinates_latitude(){
-	float coordinates;
-	printf("Digite a latitude: ");
-	scanf("%f", &coordinates);
-	return coordinates;
-}
-
-float get_coordinates_longitude(){
-	float coordinates;
-	printf("Digite a longitude: ");
-	scanf("%f", &coordinates);
-	return coordinates;
-}
 
 uint16_t get_checksum(const char* message, uint32_t message_size){ //RFC 1071
 	uint32_t checksum_32 = 0;
@@ -81,34 +36,43 @@ uint16_t get_checksum(const char* message, uint32_t message_size){ //RFC 1071
 	return 0;
 }
 
-void get_message(struct gs_generic_protocol_t* new_message) {
-	new_message->message_type = get_message_type();
+//
+//	Recebe ponteiro estrutura vazia de mensagem gs_generic_protocol_t
+//
+void get_message(struct gs_generic_protocol_t* new_message) { 
+	//new_message->message_type = get_message_type();
+	
+	char message_type;
+	uint8_t fuel_type;
+	uint32_t generic_int; // Pode ser o preço ou o raio
+	float latitude, longitude;
 
-	printf("Tipo de combustivel: ");
-	scanf("%hhu", &new_message->fuel_type);
-	if(new_message->fuel_type > 2) {
+	printf("Insira os dados: ");
+	scanf("%c %hhu %u %f %f", &message_type, &fuel_type, &generic_int, &latitude, &longitude);
+
+	//printf("Tipo de combustivel: ");
+	//scanf("%hhu", &new_message->fuel_type);
+	if(fuel_type > 2) {
 		fprintf(stderr, "Tipo de combustivel invalido\n");
 		exit(EXIT_FAILURE);
 	}
-
-	if (new_message->message_type == 'D') {
-		float fuel_price_f;
+	
+	// Salva as informações na struct
+	if (message_type == 'D' || message_type == 'd') { 
 		struct gs_data_protocol_t* data_protocol = new_message->data_protocol;
-
-		printf("Preço do combustivel: ");
-		scanf("%f", &fuel_price_f);
-		data_protocol->fuel_price = (uint32_t)(fuel_price_f*1000);
-
-		data_protocol->latitude = get_coordinates_latitude();
-		data_protocol->longitude = get_coordinates_longitude();
+		new_message->message_type = 'D';
+		new_message->fuel_type = fuel_type;
+		data_protocol->fuel_price = generic_int;
+		data_protocol->latitude = latitude;
+		data_protocol->longitude = longitude;
 	}
-	else if(new_message->message_type == 'P') {
+	else if(message_type == 'P' || message_type == 'p') {
 		struct gs_search_protocol_t* search_protocol = new_message->search_protocol;
-		printf("Insira o raio de busca: ");
-		scanf("%u", &search_protocol->radius);
-
-		search_protocol->latitude = get_coordinates_latitude();
-		search_protocol->longitude = get_coordinates_longitude();
+		new_message->message_type = 'P';
+		new_message->fuel_type = fuel_type;
+		search_protocol->radius = generic_int;
+		search_protocol->latitude = latitude;
+		search_protocol->longitude = longitude;
 	}
 	else {
 		fprintf(stderr, "Tipo de mensagem invalido\n");
@@ -139,12 +103,15 @@ void convert_message_ns(char* message_str) {
 
 }
 
+// Empacota a mensagem em uma string não legivel, a string contém somente os bytes
 void pack_message(const struct gs_generic_protocol_t* message_st, char* message_str) {
 	uint32_t const message_size = EXPECTED_MESSAGE_SIZE; // Já foi util em alguma versão do programa, porém não tem mais nenhum uso, mas daria muito trabalho remover
 	char* message_point = message_str;
 	if (message_st) {
+
+		// Escreve um dado de N bytes na string
 		memcpy(message_point, &message_size, sizeof(message_size));
-		message_point += sizeof(message_size);
+		message_point += sizeof(message_size); // O ponteiro pra string sinaliza o proximo byte vazio da string
 
 		memcpy(message_point, &message_st->message_type, sizeof(message_st->message_type));
 		message_point += sizeof(message_st->message_type);
@@ -173,7 +140,7 @@ void pack_message(const struct gs_generic_protocol_t* message_st, char* message_
 			memcpy(message_point, &search_protocol.longitude, sizeof(search_protocol.longitude));
 		}
 
-		convert_message_ns(message_str);
+		convert_message_ns(message_str); // Chama a rotina para conversão dos dados para BIG ENDIAN
 		return;
 	}
 
